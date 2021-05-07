@@ -10,9 +10,9 @@ class PostController extends Controller
 {
     public function index()
     {
-        $data = Post::latest()->paginate(10);
+        $posts = Post::latest()->paginate(10);
 
-        return view('posts.index',compact('data'));
+        return view('posts.index',compact('posts'));
     }
 
     public function create()

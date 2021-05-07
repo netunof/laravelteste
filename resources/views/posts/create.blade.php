@@ -28,8 +28,7 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 bg-white border-b border-gray-200">
-                <form id="formCriar" {{--method="POST" action="{{ route('posts.store') }}"--}}>{{-- se eu colocar método post ele não carrega nada e tem perigo de inserir o mesmo dado várias vezes --}}
-                    @csrf
+                <form id="formCreate" method="POST">
                     <div class="mb-4">
                         <label class="text-xl text-gray-600" for="title">Título <span class="text-red-500">*</span></label></br>
                         <input type="text" class="border-2 border-gray-300 p-2 w-full" name="titulo" id="titulo" required/>
@@ -43,10 +42,12 @@
                         <textarea class="border-2 border-gray-300 p-2 w-full" name="corpo" id="corpo" required></textarea>
                     </div>
                     <div class="flex m-2 gap-4">
-                        <button class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-green-600 text-white border" type="submit" id="btnCriar">
+                        <button type="submit" id="btnSalvar" onclick="criar()"
+                        class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-green-600 text-white border">
                             <div class="flex leading-5">Salvar</div>
                         </button>
-                        <button class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-gray-100 text-black border" type="reset" id="btnFechar">
+                        <button type="reset" id="btnFechar"
+                        class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-gray-100 text-black border">
                             <div class="flex leading-5">Fechar</div>
                         </button>
                     </div>

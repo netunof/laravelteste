@@ -28,7 +28,7 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 bg-white border-b border-gray-200">
-                <form method="POST" action="{{ route('posts.update', $post->id) }}">
+                <form id="formUpdate">
                     @csrf
                     @method('PUT')
                     <div class="mb-4">
@@ -44,7 +44,8 @@
                         <textarea class="border-2 border-gray-300 p-2 w-full" name="corpo" id="corpo" required>{{ $post->corpo }}</textarea>
                     </div>
                     <div class="flex m-2 gap-4">
-                        <button class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-green-600 text-white border" type="submit">
+                        <button type="submit" id="btnAtualizar" onclick="atualizar({{$post->id}})"
+                        class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-green-600 text-white border">
                             <div class="flex leading-5">Salvar</div>
                         </button>
                         <button class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-gray-100 text-black border" type="reset" id="btnFechar">
