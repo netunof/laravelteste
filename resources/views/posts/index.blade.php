@@ -10,13 +10,13 @@
                     Publicações
                 </div>
                 <div>
-                    <a class="text-white rounded-md bg-green-500 p-2 px-4 cursor-pointer" id="btnCreate"
+                    <a class="text-white rounded-md bg-green-500 p-2 px-4 cursor-pointer" id="btnModalCriar"
                         data-attr="{{ route('posts.create') }}" title="Criar"> Nova Publicação
                     </a>
                 </div>
 
                 <div class="bg-white shadow-md rounded my-6">
-                    <table class="table-auto">
+                    <table class="w-full">
                         <thead>
                             <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-left">ID</th>
@@ -38,13 +38,13 @@
                                 {{-- TÍTULO --}}
                                 <td class="py-3 px-6 text-left">
                                     <div class="flex items-center">
-                                        {{ $value->title }}
+                                        {{ $value->titulo }}
                                     </div>
                                 </td>
                                 {{-- RESUMO --}}
                                 <td class="py-3 px-6 text-center">
                                     <div class="flex items-center justify-center">
-                                        {{ \Str::limit($value->description, 100) }}
+                                        {{ ($value->resumo) }}
                                     </div>
                                 </td>
                                 {{-- AÇÕES --}}
@@ -62,7 +62,7 @@
                                                 </div>
                                             </a>
                                             {{-- EDITAR --}}
-                                            <a id="btnEditL" class="cursor-pointer"
+                                            <a id="btnEditar" class="cursor-pointer"
                                                 data-attr="{{ route('posts.edit',$value->id) }}">
                                                 <div class="w-4 mr-2 transform hover:text-green-500 hover:scale-110">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,18 +110,7 @@
                 <div class="p-5">
                     <div class="flex justify-center items-baseline flex-wrap">
                         <div class="flex m-2 gap-4">
-                            <button class="hidden text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-green-600 text-white border" id="btnStore">
-                                <div class="flex leading-5">Salvar</div>
-                            </button>
-                            <button class="hidden text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-yellow-600 text-white border" id="btnEdit">
-                                <div class="flex leading-5">Editar</div>
-                            </button>
-                            <button class="hidden text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-red-600 text-white border" id="btnDelete">
-                                <div class="flex leading-5">Apagar</div>
-                            </button>
-                            <button class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-gray-100 text-black border" id="btnFechar">
-                                <div class="flex leading-5">Fechar</div>
-                            </button>
+
                         </div>
                     </div>
 
@@ -130,119 +119,99 @@
         </div>
     </div>
     {{-- modal --}}
-
 </div>
 <script>
-    //criando uma função pra cada botão, futuramente implementar uma lógica mais simples e menos verbosa
-    $(document).on('click', '#btnCreate', function(event) {
-        event.preventDefault();//eu previno o comportamento padrão das tags, por exemplo <a> não vai direcionar pro link
-        let href = $(this).attr('data-attr'); //.attr pega qualquer elemento data-algumaCoisa, que no caso é uma URL
-        //ajax abre uma requisição para a URL oferecida e renderiza ela no success
-        $.ajax({//$ é sinônimo de jQuery, ou seja, jQuery.ajax
-        //url recebe uma string como argumento, eis uma penca de argumentos pra função
-        //ajax é assíncrono por padrão
-            url: href,
-            beforeSend: function() {//é chamada antes da requisição, se retornar falso cancela a requisição do ajax
-                $('#loader').show();
-            },
-            // return the result
-            success: function(result) { //função intermediária que recebe qualquer coisa como parâmetro, só é acionada se a requisição funcionar
-                $('#modalForm').show(); //jQuery(pega algum elemento da página).mostraOElemento()
-                $('#btnStore').show();
-                $('#corpoForm').html(result).show(); //renderiza a URL neste elemento da página
-            },
-            complete: function() { //é chamada depois de error e success
-                $('#loader').hide();
-            },
-            error: function(jqXHR, testStatus, error) { //retorna o erro caso a requisição não aconteça
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
-            timeout: 8000 //define o tempo limite para a resquisição, se passar 8 segundos a função é cancelada
-        }) //fim do ajax e dos seus parâmtros de configuração
+    //configuração do AJAX
+    $.ajaxSetup({
+    headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     });
-    //editar ícone
-    $(document).on('click', '#btnEditL', function(event) {
-        event.preventDefault();
-        let href = $(this).attr('data-attr');
-        $.ajax({
-            url: href,
-            beforeSend: function() {
-                $('#loader').show();
-            },
-            success: function(result) {
+    //abrir modal
+    $(document).on('click','#btnModalCriar',function(event) {
+		event.preventDefault();
+        let href = $(this).attr('data-attr'); //renderiza o que quer que exista dentro deste link no modal
+		$.ajax({
+			url: href,
+			success: function(result){
                 $('#modalForm').show();
-                $('#btnStore').show();
-                $('#btnEdit').hide();
-                $('#btnDelete').hide();
-                $('#corpoForm').html(result).show();
+                $('#corpoForm').html(result);
             },
-            complete: function() {
-                $('#loader').hide();
-            },
+            timeout: 8000
+		});
+	});
+    //criar
+    $(document).on('click','#btnCriar',function(e) {
+		var data = $("#formCriar").serialize();
+		$.ajax({
+			data: data,
+			method: "POST",
+			url: "/posts",
+			success: function(){
+                $('#modalForm').hide();
+			},
             error: function(jqXHR, testStatus, error) {
                 console.log(error);
                 alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
             },
             timeout: 8000
-        })
-    });
-    //editar botão
-    $(document).on('click', '#btnEdit', function(event) {
-        event.preventDefault();
+		});
+	});
+    //mostrar post
+    $(document).on('click','#btnShow',function(event) {
+		event.preventDefault();
         let href = $(this).attr('data-attr');
-        $.ajax({
-            url: href,
-            beforeSend: function() {
-                $('#loader').show();
-            },
-            success: function(result) {
+		$.ajax({
+			url: href,
+			success: function(result){
                 $('#modalForm').show();
-                $('#btnStore').show();
-                $('#btnEdit').hide();
-                $('#btnDelete').hide();
                 $('#corpoForm').html(result).show();
             },
-            complete: function() {
-                $('#loader').hide();
-            },
-            error: function(jqXHR, testStatus, error) {
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
             timeout: 8000
-        })
-    });
-    //mostrar
-    $(document).on('click', '#btnShow', function(event) {
-        event.preventDefault();
-        let href = $(this).attr('data-attr');
+		});
+	});
+    //editar
+    $(document).on('click', '#btnEditar', function(e) {
+        var href = $(this).attr('data-attr');
+        let id = $('#idPost').val();
         $.ajax({
+            method:'GET',
             url: href,
-            beforeSend: function() {
-                $('#loader').show();
-            },
             success: function(result) {
                 $('#modalForm').show();
-                $('#btnStore').hide();
-                $('#btnEdit').show();
-                $('#btnDelete').show();
                 $('#corpoForm').html(result).show();
-            },
-            complete: function() {
-                $('#loader').hide();
-            },
-            error: function(jqXHR, testStatus, error) {
-                console.log(error);
-                alert("Page " + href + " cannot open. Error:" + error);
-                $('#loader').hide();
-            },
-            timeout: 8000
+            }
         })
     });
+
+    function editar(id) { //esta função por hora é desnecessária pois já existe um formulário sendo submetido na view edit e sendo validado no back
+        $.ajax({
+            method: 'GET',
+            url: '/posts/'+id,
+            success: function(result) {
+                var resp = JSON.parse(result);
+                $('#idpost').val(resp.id);
+                $('#title').val(resp.title);
+                $('#resumo').val(resp.resumo);
+                $('#body').val(resp.body);
+            }
+        });
+    }
+    function apagar(id) {
+        if(confirm("Deseja apagar o post?") == true){
+            $.ajax({
+                method: 'DELETE',
+                url: '/posts',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "id": id
+                },
+                success: function(result) {
+                    location.reload();
+                }
+            });
+        }
+    }
     $(document).on('click', '#btnFechar', function () {
         $('#modalForm').hide();
     });

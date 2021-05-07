@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     public function index()
     {
-        $data = Post::latest()->paginate(5);
+        $data = Post::latest()->paginate(10);
 
-        return view('posts.index',compact('data'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+        return view('posts.index',compact('data'));
     }
 
     public function create()
@@ -22,15 +22,19 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-         $request->validate([
-            'title' => 'required',
-            'description' => 'required',
+        $request->validate([
+            'titulo' => 'required',
+            'resumo' => 'required',
+            'corpo' => 'required',
         ]);
 
-        Post::create($request->all());
+        $post = Post::create($request->all());
 
-        return redirect()->route('posts.index')
-                        ->with('success','Post created successfully.');
+        if(!is_null($post)) {
+            return response()->json(["status" => "success", "message" => "Success! post created.", "data" => $post]);
+        } else {
+            return response()->json(["status" => "failed", "message" => "Alert! post not created"]);
+        }
     }
 
     public function show(Post $post)
@@ -46,8 +50,9 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         $request->validate([
-            'title' => 'required',
-            'description' => 'required',
+            'titulo' => 'required',
+            'resumo' => 'required',
+            'corpo' => 'required',
         ]);
 
         $post->update($request->all());

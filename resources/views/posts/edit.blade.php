@@ -33,15 +33,23 @@
                     @method('PUT')
                     <div class="mb-4">
                         <label class="text-xl text-gray-600" for="title">Título<span class="text-red-500">*</span></label></br>
-                        <input type="text" class="border-2 border-gray-300 p-2 w-full" name="title" id="title" value="{{ $post->title }}" required/>
+                        <input type="text" class="border-2 border-gray-300 p-2 w-full" name="titulo" id="titulo" value="{{ $post->titulo }}" required/>
                     </div>
                     <div class="mb-4">
                         <label class="text-xl text-gray-600" for="resumo">Resumo</label></br>
-                        <input type="text" class="border-2 border-gray-300 p-2 w-full" name="resumo" id="resumo" placeholder="(Optional)"/>
+                        <input type="text" class="border-2 border-gray-300 p-2 w-full" name="resumo" id="resumo" value="{{ $post->resumo }}" required/>
                     </div>
                     <div class="mb-8">
                         <label class="text-xl text-gray-600" for="body">Corpo do texto <span class="text-red-500">*</span></label></br>
-                        <textarea name="description" class="border-2 border-gray-300 p-2 w-full" id="body" required>{{ $post->description }}</textarea>
+                        <textarea class="border-2 border-gray-300 p-2 w-full" name="corpo" id="corpo" required>{{ $post->corpo }}</textarea>
+                    </div>
+                    <div class="flex m-2 gap-4">
+                        <button class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-green-600 text-white border" type="submit">
+                            <div class="flex leading-5">Salvar</div>
+                        </button>
+                        <button class="text-base flex justify-center px-4 py-2 rounded font-bold cursor-pointer bg-gray-100 text-black border" type="reset" id="btnFechar">
+                            <div class="flex leading-5">Fechar</div>
+                        </button>
                     </div>
                 </form>
             </div>
